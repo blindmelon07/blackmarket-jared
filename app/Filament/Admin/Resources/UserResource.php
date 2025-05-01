@@ -62,7 +62,7 @@ class UserResource extends Resource
                             ->imagePreviewHeight('250')
                             ->panelAspectRatio('7:2')
                             ->panelLayout('integrated')
-                            ->columnSpan('full'),
+                            ->columnSpan('half'),
                         Forms\Components\TextInput::make('email')
                             ->required()
                             ->prefixIcon('heroicon-m-envelope')

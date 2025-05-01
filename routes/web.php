@@ -25,9 +25,10 @@ Livewire::setScriptRoute(function ($handle) {
 */
 Route::get('/', function () {
     $products = Product::with('category')->latest()->get();
-    return view('welcome', compact('products'));
+    $categories = \App\Models\Category::all();
+    return view('welcome', compact('products', 'categories'));
 });
-Route::get('/admin/{sellerId}', function ($sellerId) {
+Route::get('/contact/{sellerId}', function ($sellerId) {
     // If not authenticated, store the redirect and send to login
     if (!Auth::check()) {
         Session::put('redirect_after_login', route('contact.seller', ['sellerId' => $sellerId]));
@@ -41,11 +42,6 @@ Route::get('/admin/{sellerId}', function ($sellerId) {
         abort(404, 'Seller not found');
     }
 
-    // Check if current user can access Filament (optional with Shield)
-    if (! Filament::auth()->user()->canAccessFilament()) {
-        abort(403, 'Unauthorized');
-    }
-
-    // Redirect to Chatify in Filament admin with seller ID
-    return redirect("/admin/chatify?user={$seller->id}");
+    // Redirect directly to Chatify with seller ID
+    return redirect("/chatify/{$seller->id}");
 })->name('contact.seller');
