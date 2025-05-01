@@ -4,12 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Black Market - Second Hand Marketplace</title>
+    @php
+        use Illuminate\Support\Facades\Storage;
+    @endphp
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak] { display: none !important; }
         .search-transition { transition: all 0.3s ease-in-out; }
         .modal-transition { transition: all 0.3s ease-out; }
+        /* Responsive text sizes */
+        @media (max-width: 640px) {
+            .text-responsive {
+                font-size: 0.875rem;
+            }
+        }
+        /* Custom scrollbar for mobile devices */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50" 
@@ -33,9 +50,9 @@
     {{-- Top Bar --}}
     <div class="bg-indigo-600">
         <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-10 text-white text-sm">
+            <div class="flex items-center justify-between h-10 text-white text-xs sm:text-sm">
                 <p class="hidden sm:block">Free shipping for orders over ₱50</p>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 sm:space-x-4">
                     <a href="#" class="hover:text-indigo-200">Track Order</a>
                     <a href="#" class="hover:text-indigo-200">Help Center</a>
                 </div>
@@ -49,18 +66,18 @@
             <div class="flex items-center justify-between h-16">
                 {{-- Logo --}}
                 <div class="flex items-center">
-                    <a href="/" class="text-2xl font-bold text-indigo-600 flex items-center space-x-2">
+                    <a href="/" class="text-xl sm:text-2xl font-bold text-indigo-600 flex items-center space-x-2">
                         <i class="fas fa-store"></i>
                         <span>Black Market</span>
                     </a>
                 </div>
 
                 {{-- Search Bar --}}
-                <div class="hidden md:flex flex-1 max-w-2xl mx-8">
+                <div class="hidden md:flex flex-1 max-w-2xl mx-4 lg:mx-8">
                     <div class="relative w-full">
                         <input type="text" 
                                placeholder="Search for products..." 
-                               class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                               class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                         <div class="absolute left-3 top-2.5 text-gray-400">
                             <i class="fas fa-search"></i>
                         </div>
@@ -68,31 +85,31 @@
                 </div>
 
                 {{-- Desktop Navigation --}}
-                <nav class="hidden md:flex items-center space-x-6">
+                <nav class="hidden md:flex items-center space-x-4 lg:space-x-6">
                     @auth
                         <a href="{{ route('filament.admin.pages.dashboard') }}" 
-                           class="flex items-center text-gray-700 hover:text-indigo-600">
+                           class="flex items-center text-sm text-gray-700 hover:text-indigo-600">
                             <i class="fas fa-user-circle mr-2"></i>
-                            Dashboard
+                            <span class="hidden lg:inline">Dashboard</span>
                         </a>
                         <form method="POST" action="{{ route('filament.admin.auth.logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="flex items-center text-gray-700 hover:text-indigo-600">
+                            <button type="submit" class="flex items-center text-sm text-gray-700 hover:text-indigo-600">
                                 <i class="fas fa-sign-out-alt mr-2"></i>
-                                Logout
+                                <span class="hidden lg:inline">Logout</span>
                             </button>
                         </form>
                     @else
                         <a href="{{ route('filament.admin.auth.login') }}" 
-                           class="flex items-center text-gray-700 hover:text-indigo-600">
+                           class="flex items-center text-sm text-gray-700 hover:text-indigo-600">
                             <i class="fas fa-sign-in-alt mr-2"></i>
-                            Login
+                            <span class="hidden lg:inline">Login</span>
                         </a>
                         @if (Route::has('filament.admin.auth.register'))
                             <a href="{{ route('filament.admin.auth.register') }}" 
-                               class="flex items-center px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                               class="flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
                                 <i class="fas fa-user-plus mr-2"></i>
-                                Register
+                                <span class="hidden sm:inline">Register</span>
                             </a>
                         @endif
                     @endauth
@@ -119,33 +136,33 @@
                 <div class="relative">
                     <input type="text" 
                            placeholder="Search for products..." 
-                           class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                           class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                     <div class="absolute left-3 top-2.5 text-gray-400">
                         <i class="fas fa-search"></i>
                     </div>
                 </div>
                 @auth
                     <a href="{{ route('filament.admin.pages.dashboard') }}" 
-                       class="block py-2 text-gray-700 hover:text-indigo-600">
+                       class="block py-2 text-sm text-gray-700 hover:text-indigo-600">
                         <i class="fas fa-user-circle mr-2"></i>
                         Dashboard
                     </a>
                     <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left py-2 text-gray-700 hover:text-indigo-600">
+                        <button type="submit" class="w-full text-left py-2 text-sm text-gray-700 hover:text-indigo-600">
                             <i class="fas fa-sign-out-alt mr-2"></i>
                             Logout
                         </button>
                     </form>
                 @else
                     <a href="{{ route('filament.admin.auth.login') }}" 
-                       class="block py-2 text-gray-700 hover:text-indigo-600">
+                       class="block py-2 text-sm text-gray-700 hover:text-indigo-600">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         Login
                     </a>
                     @if (Route::has('filament.admin.auth.register'))
                         <a href="{{ route('filament.admin.auth.register') }}" 
-                           class="block py-2 text-gray-700 hover:text-indigo-600">
+                           class="block py-2 text-sm text-gray-700 hover:text-indigo-600">
                             <i class="fas fa-user-plus mr-2"></i>
                             Register
                         </a>
@@ -156,21 +173,21 @@
     </header>
 
     {{-- Hero Section --}}
-    <section class="relative bg-gradient-to-r from-indigo-600 to-indigo-800 py-20">
+    <section class="relative bg-gradient-to-r from-indigo-600 to-indigo-800 py-12 sm:py-16 md:py-20">
         <div class="absolute inset-0 bg-black opacity-50"></div>
         <div class="container mx-auto px-4 relative z-10">
             <div class="max-w-3xl mx-auto text-center">
-                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6">
                     Find Amazing Deals on Second-Hand Items
                 </h1>
-                <p class="text-xl text-indigo-100 mb-8">
+                <p class="text-lg sm:text-xl text-indigo-100 mb-6 sm:mb-8">
                     Buy and sell pre-loved items in a safe and secure marketplace
                 </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="#" class="px-8 py-3 bg-white text-indigo-600 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+                    <a href="#" class="px-6 sm:px-8 py-3 bg-white text-indigo-600 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm sm:text-base">
                         Start Shopping
                     </a>
-                    <a href="#" class="px-8 py-3 bg-indigo-700 text-white rounded-lg font-medium hover:bg-indigo-800 transition-colors">
+                    <a href="#" class="px-6 sm:px-8 py-3 bg-indigo-700 text-white rounded-lg font-medium hover:bg-indigo-800 transition-colors text-sm sm:text-base">
                         Sell Your Items
                     </a>
                 </div>
@@ -179,127 +196,130 @@
     </section>
 
     {{-- Categories Section --}}
-    <section class="py-12 bg-white">
+    <section class="py-8 sm:py-12 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-2xl font-bold text-gray-900 mb-8">Shop by Category</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <a href="#" class="group">
-                    <div class="aspect-square rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                        <i class="fas fa-laptop text-4xl text-indigo-600"></i>
-                    </div>
-                    <p class="mt-2 text-center text-gray-600 group-hover:text-indigo-600">Electronics</p>
-                </a>
-                <a href="#" class="group">
-                    <div class="aspect-square rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                        <i class="fas fa-tshirt text-4xl text-indigo-600"></i>
-                    </div>
-                    <p class="mt-2 text-center text-gray-600 group-hover:text-indigo-600">Fashion</p>
-                </a>
-                <a href="#" class="group">
-                    <div class="aspect-square rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                        <i class="fas fa-couch text-4xl text-indigo-600"></i>
-                    </div>
-                    <p class="mt-2 text-center text-gray-600 group-hover:text-indigo-600">Furniture</p>
-                </a>
-                <a href="#" class="group">
-                    <div class="aspect-square rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                        <i class="fas fa-gamepad text-4xl text-indigo-600"></i>
-                    </div>
-                    <p class="mt-2 text-center text-gray-600 group-hover:text-indigo-600">Gaming</p>
-                </a>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Shop by Category</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+                @foreach($categories as $category)
+                    <a href="#" 
+                       @click.prevent="activeCategory = {{ $category->id }}; currentView = 'products'"
+                       class="group"
+                       :class="{ 'ring-2 ring-indigo-600': activeCategory === {{ $category->id }} }">
+                        <div class="aspect-square rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
+                            <i class="fas {{ $category->icon ?? 'fa-tag' }} text-2xl sm:text-4xl text-indigo-600"></i>
+                        </div>
+                        <p class="mt-2 text-center text-sm sm:text-base text-gray-600 group-hover:text-indigo-600">{{ $category->name }}</p>
+                    </a>
+                @endforeach
             </div>
         </div>
     </section>
 
-    {{-- Featured Products --}}
-    <section class="py-12 bg-gray-50">
+    {{-- Products Section --}}
+    <section class="py-8 sm:py-12 bg-gray-50" x-show="currentView === 'products' || currentView === 'home'">
         <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-900">Featured Products</h2>
-                <a href="#" class="text-indigo-600 hover:text-indigo-800">View All <i class="fas fa-arrow-right ml-2"></i></a>
+            <div class="flex justify-between items-center mb-6 sm:mb-8">
+                <div class="flex items-center space-x-4">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900">
+                        <span x-show="currentView === 'home'">Featured Products</span>
+                        <span x-show="currentView === 'products'">Products</span>
+                    </h2>
+                    <span x-show="activeCategory" class="text-sm text-gray-500">
+                        in <span class="font-medium" x-text="categories.find(c => c.id === activeCategory)?.name"></span>
+                    </span>
+                </div>
+                <button x-show="currentView === 'products'" 
+                        @click="currentView = 'home'; activeCategory = null" 
+                        class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    <span class="text-sm sm:text-base">Back to Home</span>
+                </button>
             </div>
 
-            @if ($products->count())
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    @foreach ($products as $product)
-                        <div class="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-md transition-shadow product-card cursor-pointer"
-                             data-product-id="{{ $product->id }}"
-                             data-negotiable="{{ $product->is_negotiable ? 'true' : 'false' }}">
-                            <div class="relative">
-                                <img src="{{ asset('storage/' . $product->image) }}" 
-                                     alt="{{ $product->name }}" 
-                                     class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 product-image">
-                                @if($product->is_negotiable)
-                                    <div class="absolute top-2 right-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="fas fa-comments-dollar mr-1"></i>
-                                            Negotiable
-                                        </span>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="p-4">
-                                <h3 class="text-lg font-medium text-gray-900 mb-1 product-name">{{ $product->name }}</h3>
-                                <p class="text-sm text-gray-500 mb-3 line-clamp-2 product-description">{{ $product->description }}</p>
-                                <div class="flex items-center justify-between">
-                                    <div class="flex flex-col">
-                                        <span class="text-lg font-bold text-indigo-600 product-price">₱{{ $product->price }}</span>
-                                        @if($product->original_price)
-                                            <span class="text-sm text-gray-500 line-through">₱{{ $product->original_price }}</span>
-                                        @endif
-                                    </div>
-                                    @if ($product->user_id)
-                                        <button @click.stop="window.location.href='{{ route('contact.seller', ['sellerId' => $product->user_id]) }}'"
-                                               class="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100">
-                                            <i class="fas fa-comments mr-2"></i>
-                                            Contact
-                                        </button>
-                                    @else
-                                        <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-gray-100 rounded-lg">
-                                            <i class="fas fa-store-slash mr-2"></i>
-                                            No Seller
-                                        </span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                @foreach($products as $product)
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-md transition-shadow product-card cursor-pointer"
+                         @click="selectedProduct = {
+                            id: {{ $product->id }},
+                            name: '{{ addslashes($product->name) }}',
+                            description: '{{ addslashes($product->description) }}',
+                            price: {{ $product->price }},
+                            original_price: {{ $product->original_price ?? 'null' }},
+                            image: '{{ $product->image }}',
+                            is_negotiable: {{ $product->is_negotiable ? 'true' : 'false' }},
+                            user_id: {{ $product->user_id ?? 'null' }},
+                            category_id: {{ $product->category_id }}
+                         }; showProductModal = true"
+                         data-category="{{ $product->category_id }}"
+                         x-show="currentView === 'home' || (currentView === 'products' && (!activeCategory || activeCategory === {{ $product->category_id }}))"
+                    >
+                        <div class="relative">
+                            <img src="{{ $product->image ? Storage::url($product->image) : asset('images/placeholder.jpg') }}" 
+                                 alt="{{ $product->name }}" 
+                                 class="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300 product-image">
+                            @if($product->is_negotiable)
+                                <div class="absolute top-2 right-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-comments-dollar mr-1"></i>
+                                        Negotiable
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="p-3 sm:p-4">
+                            <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-1 product-name">{{ $product->name }}</h3>
+                            <p class="text-xs sm:text-sm text-gray-500 mb-3 line-clamp-2 product-description">{{ $product->description }}</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <span class="text-base sm:text-lg font-bold text-indigo-600 product-price">₱{{ $product->price }}</span>
+                                    @if($product->original_price)
+                                        <span class="text-xs sm:text-sm text-gray-500 line-through">₱{{ $product->original_price }}</span>
                                     @endif
                                 </div>
+                                @if($product->user_id)
+                                    <button @click.stop="window.location.href = '/contact/{{ $product->user_id }}'"
+                                            class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100">
+                                        <i class="fas fa-comments mr-1 sm:mr-2"></i>
+                                        Contact
+                                    </button>
+                                @else
+                                    <span class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-500 bg-gray-100 rounded-lg">
+                                        <i class="fas fa-store-slash mr-1 sm:mr-2"></i>
+                                        No Seller
+                                    </span>
+                                @endif
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-12 bg-white rounded-lg">
-                    <div class="text-gray-400 mb-4">
-                        <i class="fas fa-box-open text-6xl"></i>
                     </div>
-                    <p class="text-gray-500">No products available at the moment.</p>
-                </div>
-            @endif
+                @endforeach
+            </div>
         </div>
     </section>
 
     {{-- Features Section --}}
-    <section class="py-12 bg-white">
+    <section class="py-8 sm:py-12 bg-white">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                 <div class="text-center">
                     <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <i class="fas fa-shield-alt text-2xl text-indigo-600"></i>
+                        <i class="fas fa-shield-alt text-xl sm:text-2xl text-indigo-600"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Secure Trading</h3>
-                    <p class="text-gray-500">Safe and secure marketplace with buyer protection</p>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Secure Trading</h3>
+                    <p class="text-sm text-gray-500">Safe and secure marketplace with buyer protection</p>
                 </div>
                 <div class="text-center">
                     <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <i class="fas fa-comments text-2xl text-indigo-600"></i>
+                        <i class="fas fa-comments text-xl sm:text-2xl text-indigo-600"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Direct Communication</h3>
-                    <p class="text-gray-500">Chat directly with sellers for the best deals</p>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Direct Communication</h3>
+                    <p class="text-sm text-gray-500">Chat directly with sellers for the best deals</p>
                 </div>
-                <div class="text-center">
+                <div class="text-center sm:col-span-2 md:col-span-1">
                     <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <i class="fas fa-hand-holding-usd text-2xl text-indigo-600"></i>
+                        <i class="fas fa-hand-holding-usd text-xl sm:text-2xl text-indigo-600"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Great Value</h3>
-                    <p class="text-gray-500">Find amazing deals on pre-loved items</p>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Great Value</h3>
+                    <p class="text-sm text-gray-500">Find amazing deals on pre-loved items</p>
                 </div>
             </div>
         </div>
@@ -307,15 +327,15 @@
 
     {{-- Footer --}}
     <footer class="bg-gray-900 text-gray-300">
-        <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="container mx-auto px-4 py-8 sm:py-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">About Us</h3>
-                    <p class="text-gray-400 text-sm">Black Market is your trusted marketplace for buying and selling second-hand items.</p>
+                    <h3 class="text-base sm:text-lg font-semibold text-white mb-4">About Us</h3>
+                    <p class="text-sm text-gray-400">Black Market is your trusted marketplace for buying and selling second-hand items.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
+                    <h3 class="text-base sm:text-lg font-semibold text-white mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
                         <li><a href="#" class="text-gray-400 hover:text-white">Home</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Shop</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Categories</a></li>
@@ -323,21 +343,21 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">Customer Service</h3>
-                    <ul class="space-y-2">
+                    <h3 class="text-base sm:text-lg font-semibold text-white mb-4">Customer Service</h3>
+                    <ul class="space-y-2 text-sm">
                         <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Shipping Info</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Returns</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h3 class="text-lg font-semibold text-white mb-4">Newsletter</h3>
-                    <p class="text-gray-400 text-sm mb-4">Subscribe to get updates on new products and special offers.</p>
+                <div class="sm:col-span-2 lg:col-span-1">
+                    <h3 class="text-base sm:text-lg font-semibold text-white mb-4">Newsletter</h3>
+                    <p class="text-sm text-gray-400 mb-4">Subscribe to get updates on new products and special offers.</p>
                     <form class="flex">
                         <input type="email" 
                                placeholder="Enter your email" 
-                               class="flex-1 px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                               class="flex-1 px-3 py-2 text-sm rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <button type="submit" 
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700">
                             <i class="fas fa-paper-plane"></i>
@@ -345,19 +365,19 @@
                     </form>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-400">&copy; {{ date('Y') }} Black Market. All rights reserved.</p>
-                <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="text-gray-400 hover:text-white">
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} Black Market. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">
                         <i class="fab fa-pinterest"></i>
                     </a>
                 </div>
@@ -379,41 +399,41 @@
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg md:max-w-xl lg:max-w-2xl w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
                             <div class="flex justify-between items-start">
-                                <h3 class="text-2xl font-bold text-gray-900" x-text="selectedProduct?.name"></h3>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-900" x-text="selectedProduct?.name"></h3>
                                 <button @click="showProductModal = false" class="text-gray-400 hover:text-gray-500">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                 <div class="relative">
-                                    <img :src="selectedProduct?.image" 
+                                    <img :src="selectedProduct?.image ? '{{ Storage::url('') }}' + selectedProduct.image : '{{ asset('images/placeholder.jpg') }}'" 
                                          :alt="selectedProduct?.name"
-                                         class="w-full h-64 object-cover rounded-lg">
+                                         class="w-full h-48 sm:h-64 object-cover rounded-lg">
                                 </div>
                                 <div>
-                                    <p class="text-gray-600 mb-4" x-text="selectedProduct?.description"></p>
+                                    <p class="text-sm text-gray-600 mb-4" x-text="selectedProduct?.description"></p>
                                     <div class="flex items-center justify-between mb-4">
                                         <div>
-                                            <span class="text-2xl font-bold text-indigo-600" x-text="'₱' + selectedProduct?.price"></span>
+                                            <span class="text-xl sm:text-2xl font-bold text-indigo-600" x-text="'₱' + selectedProduct?.price"></span>
                                             <span class="text-sm text-gray-500 line-through ml-2" x-text="selectedProduct?.original_price ? '₱' + selectedProduct?.original_price : ''"></span>
                                         </div>
                                         <span x-show="selectedProduct?.is_negotiable" 
-                                              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                              class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800">
                                             <i class="fas fa-comments-dollar mr-1"></i>
                                             Negotiable
                                         </span>
                                     </div>
-                                    <div class="space-y-4">
-                                        <button class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                    <div class="space-y-3">
+                                        <button class="w-full px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
                                             <i class="fas fa-comments mr-2"></i>
                                             Contact Seller
                                         </button>
-                                        <button class="w-full px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50">
+                                        <button class="w-full px-4 py-2 border border-indigo-600 text-sm text-indigo-600 rounded-lg hover:bg-indigo-50">
                                             <i class="fas fa-heart mr-2"></i>
                                             Save Item
                                         </button>
