@@ -8,6 +8,9 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -91,6 +94,17 @@ class UserResource extends Resource
                             ->label('Roles'),
                     ])
                     ->columns(1),
+                Forms\Components\Section::make('Trust Score')
+                    ->schema([
+                        Forms\Components\TextInput::make('trust_score')
+                            ->label('Trust Score')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->default(100)
+                            ->required(),
+                    ])
+                    ->columns(1),
 
             ]);
     }
@@ -105,6 +119,18 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->sortable()
                     ->searchable(),
+            TextColumn::make('trust_score')
+    ->label('Trust')
+    ->formatStateUsing(function ($state) {
+        $stars = floor($state / 20);
+        $color = match (true) {
+            $state < 40 => 'text-red-500',
+            $state < 70 => 'text-yellow-500',
+            default => 'text-green-500',
+        };
+        return "<span class='{$color}'>" . str_repeat('⭐', $stars) . str_repeat('☆', 5 - $stars) . "</span>";
+    })
+    ->html(),
                 Tables\Columns\ImageColumn::make('avatar_url')
                     ->defaultImageUrl(url('https://www.gravatar.com/avatar/64e1b8d34f425d19e1ee2ea7236d3028?d=mp&r=g&s=250'))
                     ->label('Avatar')
