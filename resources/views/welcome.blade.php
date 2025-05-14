@@ -218,16 +218,27 @@
     {{-- Products Section --}}
     <section class="py-8 sm:py-12 bg-gray-50" x-show="currentView === 'products' || currentView === 'home'">
         <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center mb-6 sm:mb-8">
-                <div class="flex items-center space-x-4">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900">
-                        <span x-show="currentView === 'home'">Featured Products</span>
-                        <span x-show="currentView === 'products'">Products</span>
-                    </h2>
-                    <span x-show="activeCategory" class="text-sm text-gray-500">
-                        in <span class="font-medium" x-text="categories.find(c => c.id === activeCategory)?.name"></span>
-                    </span>
-                </div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+    <h2 class="text-xl sm:text-2xl font-bold text-gray-900">
+        <span x-show="currentView === 'home'">Featured Products</span>
+        <span x-show="currentView === 'products'">Products</span>
+    </h2>
+    
+    <span x-show="activeCategory" class="text-sm text-gray-500">
+        in <span class="font-medium" x-text="categories.find(c => c.id === activeCategory)?.name"></span>
+    </span>
+
+    <template x-if="selectedProduct">
+        <div class="text-sm text-gray-600 flex items-center space-x-2">
+            <span>Seller:</span>
+            <span class="font-medium text-gray-800" x-text="selectedProduct.user?.name || 'Unknown'"></span>
+            <span class="text-yellow-500">
+                <i class="fas fa-star"></i>
+                <span x-text="selectedProduct.user?.trust_score ?? 0"></span>/5
+            </span>
+        </div>
+    </template>
+</div>
                 <button x-show="currentView === 'products'" 
                         @click="currentView = 'home'; activeCategory = null" 
                         class="text-indigo-600 hover:text-indigo-800">
