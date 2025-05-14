@@ -22,6 +22,15 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_new')->default(false);
             $table->unsignedBigInteger('category_id')->constrained()->onDelete('cascade');
+            $table->enum('condition', ['like_new', 'excellent', 'good', 'fair', 'poor'])->default('good');
+            $table->integer('usage_months')->nullable();
+            $table->text('usage_details')->nullable();
+            $table->boolean('has_warranty')->default(false);
+            $table->text('warranty_details')->nullable();
+            $table->boolean('is_negotiable')->default(true);
+            $table->decimal('original_price', 10, 2)->nullable();
+            $table->string('meetup_location')->nullable();
+            $table->boolean('is_verified')->default(false);
             $table->timestamps();
         });
     }
