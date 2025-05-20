@@ -20,7 +20,7 @@
     </head>
 
     <body class="antialiased">
-        {{ $slot }}
+        @yield('content')
 
         @filamentScripts
         @vite('resources/js/app.js')

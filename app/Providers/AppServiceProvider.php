@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\SellerApplication;
+use App\Observers\SellerApplicationObserver;
 use App\Policies\ActivityPolicy;
 use Filament\Actions\MountableAction;
 use Filament\Notifications\Livewire\Notifications;
@@ -21,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        SellerApplication::observe(SellerApplicationObserver::class);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use App\Models\Product;
 use App\Models\User;
+use App\Http\Controllers\SellerController;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Auth;
@@ -45,3 +46,7 @@ Route::get('/contact/{sellerId}', function ($sellerId) {
     // Redirect directly to Chatify with seller ID
     return redirect("/chatify/{$seller->id}");
 })->name('contact.seller');
+Route::middleware('auth')->group(function () {
+    Route::get('/become-seller', [SellerController::class, 'show'])->name('become.seller');
+    Route::post('/become-seller', [SellerController::class, 'apply'])->name('become.seller.apply');
+});

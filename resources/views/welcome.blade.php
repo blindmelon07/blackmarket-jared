@@ -55,6 +55,15 @@
                 <div class="flex items-center space-x-2 sm:space-x-4">
                     <a href="#" class="hover:text-indigo-200">Track Order</a>
                     <a href="#" class="hover:text-indigo-200">Help Center</a>
+                    @auth
+    @if (!auth()->user()->hasRole('seller'))
+        <a href="{{ route('become.seller') }}"
+           class="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
+            <i class="mr-2 fas fa-store"></i>
+            Become a Seller
+        </a>
+    @endif
+@endauth
                 </div>
             </div>
         </div>
@@ -247,63 +256,76 @@
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 md:gap-8">
-                @foreach($products as $product)
-                    <div class="overflow-hidden transition-shadow bg-white rounded-lg shadow-sm cursor-pointer group hover:shadow-md product-card"
-                         @click="selectedProduct = {
-                            id: {{ $product->id }},
-                            name: '{{ addslashes($product->name) }}',
-                            description: '{{ addslashes($product->description) }}',
-                            price: {{ $product->price }},
-                            original_price: {{ $product->original_price ?? 'null' }},
-                            image: '{{ $product->image }}',
-                            is_negotiable: {{ $product->is_negotiable ? 'true' : 'false' }},
-                            user_id: {{ $product->user_id ?? 'null' }},
-                            category_id: {{ $product->category_id }}
-                         }; showProductModal = true"
-                         data-category="{{ $product->category_id }}"
-                         x-show="currentView === 'home' || (currentView === 'products' && (!activeCategory || activeCategory === {{ $product->category_id }}))"
-                    >
-                        <div class="relative">
-                            <img src="{{ $product->image ? Storage::url($product->image) : asset('images/placeholder.jpg') }}"
-                                 alt="{{ $product->name }}"
-                                 class="object-cover w-full h-40 transition-transform duration-300 sm:h-48 group-hover:scale-105 product-image">
-                            @if($product->is_negotiable)
-                                <div class="absolute top-2 right-2">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <i class="mr-1 fas fa-comments-dollar"></i>
-                                        Negotiable
-                                    </span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="p-3 sm:p-4">
-                            <h3 class="mb-1 text-base font-medium text-gray-900 sm:text-lg product-name">{{ $product->name }}</h3>
-                            <p class="mb-3 text-xs text-gray-500 sm:text-sm line-clamp-2 product-description">{{ $product->description }}</p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-col">
-                                    <span class="text-base font-bold text-indigo-600 sm:text-lg product-price">₱{{ $product->price }}</span>
-                                    @if($product->original_price)
-                                        <span class="text-xs text-gray-500 line-through sm:text-sm">₱{{ $product->original_price }}</span>
-                                    @endif
-                                </div>
-                                @if($product->user_id)
-                                    <button @click.stop="window.location.href = '/contact/{{ $product->user_id }}'"
-                                            class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100">
-                                        <i class="mr-1 fas fa-comments sm:mr-2"></i>
-                                        Contact
-                                    </button>
-                                @else
-                                    <span class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-500 bg-gray-100 rounded-lg">
-                                        <i class="mr-1 fas fa-store-slash sm:mr-2"></i>
-                                        No Seller
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
+         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 md:gap-8">
+    @foreach($products as $product)
+        <div class="overflow-hidden transition-shadow bg-white rounded-lg shadow-sm cursor-pointer group hover:shadow-md product-card"
+             @click="selectedProduct = {
+                id: {{ $product->id }},
+                name: '{{ addslashes($product->name) }}',
+                description: '{{ addslashes($product->description) }}',
+                price: {{ $product->price }},
+                original_price: {{ $product->original_price ?? 'null' }},
+                image: '{{ $product->image }}',
+                is_negotiable: {{ $product->is_negotiable ? 'true' : 'false' }},
+                user_id: {{ $product->user_id ?? 'null' }},
+                category_id: {{ $product->category_id }},
+                user: {
+                    name: '{{ $product->user?->name ?? 'Unknown' }}',
+                    trust_score: {{ $product->user?->trust_score ?? 0 }}
+                }
+             }; showProductModal = true"
+             data-category="{{ $product->category_id }}"
+             x-show="currentView === 'home' || (currentView === 'products' && (!activeCategory || activeCategory === {{ $product->category_id }}))"
+        >
+            <div class="relative">
+                <img src="{{ $product->image ? Storage::url($product->image) : asset('images/placeholder.jpg') }}"
+                     alt="{{ $product->name }}"
+                     class="object-cover w-full h-40 transition-transform duration-300 sm:h-48 group-hover:scale-105 product-image">
+                @if($product->is_negotiable)
+                    <div class="absolute top-2 right-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="mr-1 fas fa-comments-dollar"></i>
+                            Negotiable
+                        </span>
                     </div>
-                @endforeach
+                @endif
             </div>
+            <div class="p-3 sm:p-4">
+                <h3 class="mb-1 text-base font-medium text-gray-900 sm:text-lg product-name">{{ $product->name }}</h3>
+                <p class="mb-3 text-xs text-gray-500 sm:text-sm line-clamp-2 product-description">{{ $product->description }}</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="text-base font-bold text-indigo-600 sm:text-lg product-price">₱{{ $product->price }}</span>
+                        @if($product->original_price)
+                            <span class="text-xs text-gray-500 line-through sm:text-sm">₱{{ $product->original_price }}</span>
+                        @endif
+                    </div>
+                    @if($product->user_id)
+                        <button @click.stop="window.location.href = '/contact/{{ $product->user_id }}'"
+                                class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100">
+                            <i class="mr-1 fas fa-comments sm:mr-2"></i>
+                            Contact
+                        </button>
+                    @else
+                        <span class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-500 bg-gray-100 rounded-lg">
+                            <i class="mr-1 fas fa-store-slash sm:mr-2"></i>
+                            No Seller
+                        </span>
+                    @endif
+                </div>
+                {{-- Seller Name and Star Rating --}}
+                <div class="flex items-center mt-2 space-x-2 text-xs">
+                    <span>Seller:</span>
+                    <span class="font-medium text-gray-800">{{ $product->user?->name ?? 'Unknown' }}</span>
+                    <span class="text-yellow-500 flex items-center">
+                        <i class="fas fa-star"></i>
+                        {{ $product->user?->trust_score ?? 0 }}/5
+                    </span>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
         </div>
     </section>
 
