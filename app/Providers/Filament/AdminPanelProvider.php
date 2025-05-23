@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->spa()
             ->login()
+
             ->passwordReset()
             ->registration()
             ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
@@ -133,6 +134,23 @@ class AdminPanelProvider extends PanelProvider
     }
     public function boot(): void
     {
+        // Make sure this runs after Filament is loaded
+        $this->app->resolving(\Filament\Http\Responses\Auth\Contracts\LoginResponse::class, function () {
+            return new class implements \Filament\Http\Responses\Auth\Contracts\LoginResponse {
+                public function toResponse($request)
+                {
+                    $user = auth()->user();
+
+                    // Check if user has 'customer' role
+                    if ($user && $user->hasRole('Customer')) {
+                        return redirect('/');
+                    }
+
+                    // For admin users or other roles, redirect to admin panel
+                    return redirect()->intended(filament()->getUrl());
+                }
+            };
+        });
         // Override the registration response
         $this->app->bind(
             \Filament\Http\Responses\Auth\Contracts\RegistrationResponse::class,
