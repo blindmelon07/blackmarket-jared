@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Pages\Auth\Register;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -10,6 +11,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
+
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -128,5 +130,20 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+    public function boot(): void
+    {
+        // Override the registration response
+        $this->app->bind(
+            \Filament\Http\Responses\Auth\Contracts\RegistrationResponse::class,
+            function () {
+                return new class implements \Filament\Http\Responses\Auth\Contracts\RegistrationResponse {
+                    public function toResponse($request)
+                    {
+                        return redirect('/');
+                    }
+                };
+            }
+        );
     }
 }
